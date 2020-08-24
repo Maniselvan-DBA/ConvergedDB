@@ -1,1 +1,57 @@
 Docker Setup 
+1>>> 
+  yum install net-tools –y
+  systemctl disable firewalld 
+  systemctl stop  firewalld 
+  yum install wget -y
+  yum remove docker docker-common docker-selinux docker-engine
+  yum install -y yum-utils device-mapper-persistent-data lvm2
+  yum install docker-engine
+  yum list docker-engine --showduplicates | sort -r 
+  systemctl start docker
+  systemctl status docker
+
+2>>>
+  Test the docker working or Not?
+  docker run hello-world
+
+3>>>>
+    add the oracle user in docker group 
+	  Check the name of docker group 
+        getent group
+	  Then add the oracle user in docker group  
+        usermod -aG docker <User(Oracle)> 
+    Now we can access the docker from root and oracle user.
+ 
+ Application setUp
+ 4>>>
+   pull the Nodejs Application Image from oracle registry
+        a.	Command to pull the image 
+        b.	docker pull us-ashburn-1.ocir.io/orasenatdpltsecitom03/converged_db/convergedbapp:latest
+            docker pull us-ashburn-1.ocir.io/orasenatdpltsecitom03/converged_db/convergedbapi:latest
+        c.	check the docker image 
+		            docker images
+        d.  Run the container 
+            docker run -it -d --restart always --name CShopApplication -p 3000:3000 us-ashburn-1.ocir.io/orasenatdpltsecitom03/converged_db/convergedbapp:latest
+            docker run -it -d --restart always --name CshopApplicationAPI -p 3001:3001 us-ashburn-1.ocir.io/orasenatdpltsecitom03/converged_db/convergedbapi:latest
+            
+        e.  database configuration edit
+            Edit the below both docker command as "Hostname" to your database Public IP for the Db connaction.
+            
+            docker exec -it CShopApplication /bin/bash -c "cd /Convergedb/ConvergeDBAppNew/database/ && 
+            sed -i -e s/"DBSERVERNAME"/"$Hostname"/g config.js && sed -i -e s/"DBSERVERNAME"/"Hostname(EDIT with you databasePUBLIC-IP)"/g configSpatial.js && 
+            sed -i -e s/"DBSERVERNAME"/"$Hostname"/g analytics.js"
+            
+            docker exec -it CshopApplicationAPI /bin/bash -c "cd /ConvergedbAPI/ConvergeDBAppAPI/database/ && 
+            sed -i -e s/"DBSERVERNAME"/"$Hostname"/g config.js && sed -i -e s/"DBSERVERNAME"/"Hostname(EDIT with you databasePUBLIC-IP)"/g configSpatial.js"
+         
+         f. Run the Application 
+            docker exec -it CShopApplication /bin/bash -c "cd /Convergedb/ConvergeDBAppNew/ && pm2 start index.js --name ApplicationNodejs"
+            docker exec -it CshopApplicationAPI /bin/bash -c "cd /ConvergedbAPI/ConvergeDBAppAPI/ && pm2 start index.js --name ApplicationApi"
+            
+         g. check the application URL
+            check the Application Url on Browser http://Hostname:3000/
+            check the ApplicationAPI Url on Browser http://Hostname:3001/products
+
+
+
