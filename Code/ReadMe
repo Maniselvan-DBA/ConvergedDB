@@ -1,1 +1,71 @@
-Readme
+Node-js application environment setup.
+Download the required files:-
+Download the complete code from the OCI storage.
+Please check the perquisite before downloading the node and oracle client.
+https://yum.oracle.com/oracle-linux-nodejs.html
+https://oracle.github.io/node-oracledb/doc/api.html#getstarted 
+https://oracle.github.io/node-oracledb/INSTALL.html#instnoderpms
+http://yum.oracle.com/repo/OracleLinux/OL7/oracle/instantclient/x86_64/index.html
+Download node-js.
+  
+Download oracle instant-client.
+ 
+
+1>>> Login to Server:-
+ 
+
+2>>> Go to Sudo user ---- Command 
+    		Sudo su –
+
+3>>> yum update  -y
+This command allows you to determine whether any updates are available for your installed packages. yum returns a list of all package updates from all repositories if any are available. This command is used to display information about advisories for packages that can be updated
+If you have new server then it will take few minutes to update the package.
+ 
+Completed 
+ 
+
+
+4>>> create a directory 
+mkdir <Any name>
+Download the Code form Github 
+Unzip the file 
+5>>> Install node on the server  
+rpm –i nodejs-12.16.1-1.e17.x86_64.rpm
+Node version to check.
+   	Node –v
+	Npm –v
+6>>>  install oracle instant client 
+ rpm –i oracle-instantclient19.6-basic-19.6.0.0.0-1.x86_64.rpm
+7>>>cd /<anyname>
+8>>> unzip <file name>
+9>>> cd <filename>
+10>>> check the pm2 command is working or not.
+	If command works then you will get output like below image.
+ 
+
+	If command is not working than,
+Run the command 
+	npm install pm2 -g
+After installation of pm2 , run the startup script by using below command.
+	Pm2 start index.js
+
+Check on the browser :-
+https://<publicip>:7001
+ 
+Rest API
+1>>> pull the Nodejs RESTAPI Image from oracle registry
+a.	Command to pull the application RestApi image 
+b.	docker pull us-ashburn-1.ocir.io/orasenatdpltsecitom03/converged_db/convergedbapi:latest 
+c.	check the docker image 
+		docker images
+d.	Run the docker image by using below command 
+		docker run -it -d --restart always --name <container name (anything )> -p 3001:3001  <image Repo name>
+e.	Execute the container 
+docker exec -it <ContainerID> /bin/bash -c "cd /ConvergedbAPI/ConvergeDBAppAPI/ && pm2 start index.js --name ApplicationApi"
+
+
+http://<Public IP>:3001/products     (To get all the product details)
+http://<Public IP>:3001/products/<PID>    (To get the particular product details)
+http://<Public IP>:3001/orderstatus   (to get the Order details) 
+
+
